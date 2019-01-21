@@ -8,10 +8,12 @@ import './assets/css/global.css'
 import Mint from 'mint-ui'
 import axios from 'axios'
 
+import HeaderItem from '@/components/common/HeaderItem';
+
 Vue.use(Mint)
 Vue.prototype.axios = axios
 Vue.config.productionTip = false
-
+Vue.component('header-item',HeaderItem)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
