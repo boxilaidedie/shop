@@ -31,26 +31,26 @@ const bianpao = require('../../assets/images/bianpao.png')
 			return {
 				imgs:['http://iph.href.lu/375x224','http://iph.href.lu/375x224','http://iph.href.lu/375x224'],
 				itemImages:[{
-					title:'新闻资讯',
+					title:'白菜专区',
 					icon:baozhu,
 					url:'#/news/list'	
 				},{
-					title:'图文分享',
+					title:'排行榜',
 					icon:dagu,	
 					url:'#/news/list'	
 				},{
-					title:'国际时讯',
+					title:'签到福利',
 					icon:fuzifutie,	
 					url:'#/news/list'	
 				},{
-					title:'世界之窗',
+					title:'经验攻略',
 					icon:zhongguofengjianzhu,	
 				},{
 					title:'在线天气',
 					icon:bianpao,	
 					url:'#/news/list'	
 				},{
-					title:'高考咨询',
+					title:'分类导航',
 					icon:wushitou,	
 					url:'#/news/list'	
 				}],
@@ -74,10 +74,10 @@ const bianpao = require('../../assets/images/bianpao.png')
 
 <style scoped>
 	.mint-swipe {
-		height: 224px;
-		border: 1px solid red;
+		height: 180px;
+
 		overflow: hidden;
-		margin-top: 40px
+
 	}
 	img {
 		width: 100%;
@@ -104,7 +104,6 @@ const bianpao = require('../../assets/images/bianpao.png')
 		height: 50px;
 		margin-top: 15px;
 		background-repeat: round;
-		/* background-image: url('../../assets/images/dagu.png'); */
 		margin-left: 37px;
 	}
 	.news-text{
