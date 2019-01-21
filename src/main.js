@@ -8,6 +8,7 @@ import './assets/css/global.css'
 import Mint from 'mint-ui'
 import axios from 'axios'
 
+
 import HeaderItem from '@/components/common/HeaderItem';
 
 Vue.use(Mint)
