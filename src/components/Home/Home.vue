@@ -2,10 +2,11 @@
 	<div>
 		
 			<div style="width:100%;height:30px;border-top:1px solid #eeee;z-index:999;display:flex;margin-top:40px;">
-				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px" class="recommend">推荐</span>
-				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px" class="fcous">关注</span>
+				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px;color:red" class="recommend">推荐</span>
+				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px;color:red" class="fcous">关注</span>
 			</div>
-			<div ref="wrapper" :style="{overflow:scroll,height:contentHeight}">
+			<!--注意项目中：overflow:scroll ，此wrapper使用fixed定位，去除首尾高度，适应mint-ui中loadmore插件 -->
+			 <div class="wrapper" :style="{'height':contentHeight,'width':'100%',position:'fixed',overflow:'scroll'}">   
 				<mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :auto-fill="false">
 					<mt-swipe :auto="4000" >
 						<mt-swipe-item v-for="(img,index) in imgs" :key="index">
@@ -24,7 +25,24 @@
 				</div>
 				<div class="good-items">
 					<ul>
-						<li v-for="(good, index) in goods" :key="index">{{good.title}}</li>
+						<li v-for="(good, index) in goods" :key="index">
+							<div class="good-content" :style="{marginTop:'14px',marginLeft:'10px'}">
+								<div style="float:left">
+									<img :src="good.imageUrl" alt="" style="display:inline-block;width:90px;height:90px;">
+								</div>
+								<div>
+									<div style="float:left;padding-left:10px;" class="item-content-right">
+										<p class="good-title">{{good.title}}</p>
+										<p class="good-tag">{{good.tag}}</p>
+										<p class="good-price">{{good.price}}</p>
+										<p :style="{marginTop:'4px'}">
+											<span :style="{fontSize:'8px',marginTop:'4px'}">{{good.source}} | {{good.getTime}}</span>
+											<span :style="{fontSize:'6px',display:'inline-block',marginLeft:'70px'}">值：{{good.deserveNumberPercent}}</span>
+										</p>
+									</div>
+								</div>
+							</div>
+						</li>
 					</ul>
 				</div>
 			</mt-loadmore>
@@ -42,7 +60,7 @@ const bianpao = require('../../assets/images/bianpao.png')
 	export default {
 		data(){
 			return {
-				imgs:['http://iph.href.lu/375x224','http://iph.href.lu/375x224','http://iph.href.lu/375x224'],
+				imgs:['https://tp-eimg.smzdm.com/201901/22/5c468b8ceee686581.png','https://tp-eimg.smzdm.com/201901/22/5c467905d692e3454.png','https://tp-eimg.smzdm.com/201901/22/5c468b69dae7a8874.png'],
 				itemImages:[{
 					title:'白菜专区',
 					icon:baozhu,
@@ -75,13 +93,16 @@ const bianpao = require('../../assets/images/bianpao.png')
 			}
 		},
 		created(){
+			var contentH = document.body.clientHeight;
+			this.contentHeight = Number(contentH)-40-100 +'px';
 			this.axios.get('/api/goods?skip=5&page=1')
 			.then((res)=>{
+				this.goods = res.data.data
 				
-				this.goods = res.data.data;
 			}).catch((err)=>{
 				console.log(err)
 			});
+			
 		},
 		methods:{
 			loadTop(){
@@ -89,28 +110,36 @@ const bianpao = require('../../assets/images/bianpao.png')
 					this.loadCount++;
 					this.axios.get('/api/goods?skip=5&page='+this.loadCount)
 					.then((res)=>{
-						console.log(res.data.data)
-						this.goods = res.data.data;
-						console.log(this.loadCount)
+						this.goods = this.goods.concat(res.data.data)
+						this.$refs.loadmore.onTopLoaded();	
+						
 					}).catch((err)=>{
 						console.log(err)
 					})
-					this.$refs.loadmore.onTopLoaded();
-				},1500)
+						
+				},2000)
 			},
 			loadBottom() {
-				 this.$refs.loadmore.onBottomLoaded();
+				setTimeout(() => {
+					this.loadCount++;
+					this.axios.get('/api/goods?skip=5&page=' + this.loadCount)
+					.then((res)=>{
+						this.goods = this.goods.concat(res.data.data)
+						this.$refs.loadmore.onBottomLoaded();
+					
+					}).catch((err)=>{
+						console.log(err)
+					})
+					console.log(this.goods)
+				}, 2000);
+				
+				
 			},
-			contentH(){
-				var contentH = this.$refs.wrapper.clientHeight;
-				this.contentHeight = contentH + 'px'
-			}
 		}
 	}
 </script>
 
 <style scoped>
-
 	.mint-swipe {
 		height: 180px;
 
@@ -171,5 +200,27 @@ const bianpao = require('../../assets/images/bianpao.png')
 		background:#fff
 		
 	}
+	.item-content-right .good-title {
+		color: #000;
+		font-size: 14px;
+		font-weight: bold
+	}
+	.item-content-right .good-tag{
+		color:grey;
+		height: 15px;
+		line-height: 15px;
+		width: 35px;
+		font-size: 6px;
+		background-color: #eee;
+		text-align: center;
+		font-weight: bold;
+		margin-top: 5px
+	}
+	.item-content-right .good-price {
+		color:red;			
+		font-size: 12px;
+		margin-top: 10px
+	}
+
 
 </style>

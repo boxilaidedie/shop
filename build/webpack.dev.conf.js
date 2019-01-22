@@ -53,9 +53,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       app.get('/api/goods',(req,res)=>{
         var skip = req.query.skip
         var page = req.query.page;
-        
         var newGoods = []
-
         //console.log(skip,'page:'+page)
         if(page == 1){
           for(var i=page-1;i<skip;i++){
