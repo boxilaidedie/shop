@@ -5,16 +5,8 @@
           <mt-button icon="more"></mt-button>
       </router-link>
     </mt-header>
-    <div class="navbar-bottom" style="width:100%;height:30px;border-top:1px solid #eeee;z-index:999;display:flex;margin-top:40px;">
-      <router-link to="/" style="display:inline-block">
-        <span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px" class="recommend">推荐</span>
-      </router-link>
-       <router-link to="/">
-      <span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px" class="fcous">关注</span>
-       </router-link>
-    </div>  
     <router-view/>
-    <mt-tabbar v-model="selected">
+    <mt-tabbar v-model="selected" is-fixed>
       <mt-tab-item id="home">
         <img slot="icon" src="./assets/images/shouye.png">
         首页
@@ -43,8 +35,14 @@ export default {
       selected:'home'
     }
   },
+  created(){
+    this.$router.push({
+      name:'home'
+    })
+  },
   watch:{
     selected(nVal, oVal){
+      console.log(nVal)
       this.$router.push({
         name:nVal
       })
@@ -54,6 +52,9 @@ export default {
 </script>
 
 <style>
+body{
+    background:rgba(211,211,211,.2)
+}
 #app {
   font-family: '微软雅黑','Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -71,5 +72,12 @@ export default {
 .mint-header-title{
   font-size: 16px;
   font-weight: bold
+}
+.mint-tabbar{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index:999
 }
 </style>
