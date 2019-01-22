@@ -116,8 +116,7 @@ const bianpao = require('../../assets/images/bianpao.png')
 					}).catch((err)=>{
 						console.log(err)
 					})
-						
-				},2000)
+				},1500)
 			},
 			loadBottom() {
 				setTimeout(() => {
@@ -131,7 +130,7 @@ const bianpao = require('../../assets/images/bianpao.png')
 						console.log(err)
 					})
 					console.log(this.goods)
-				}, 2000);
+				}, 1500);
 				
 				
 			},
