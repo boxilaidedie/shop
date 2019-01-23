@@ -1,14 +1,10 @@
 <template>
 	<div>
 		
-			<div style="width:100%;height:30px;border-top:1px solid #eeee;z-index:999;display:flex;margin-top:40px;">
-				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px;color:red" class="recommend">推荐</span>
-				<span style="height:30px;display:inline-block;line-height:30px;width:50%;text-align:center;font-size:14px;color:red" class="fcous">关注</span>
-			</div>
 			<!--注意项目中：overflow:scroll ，此wrapper使用fixed定位，去除首尾高度，适应mint-ui中loadmore插件 -->
 			 <div class="wrapper" :style="{'height':contentHeight,'width':'100%',position:'fixed',overflow:'scroll'}">   
-				<mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :auto-fill="false">
-					<mt-swipe :auto="4000" >
+				<mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :auto-fill="false" :style="{touchAction: 'none'}">
+					<mt-swipe :auto="4000" :style="{height:swipeHeight}">
 						<mt-swipe-item v-for="(img,index) in imgs" :key="index">
 							<img :src="img">
 						</mt-swipe-item>
@@ -85,11 +81,11 @@ const bianpao = require('../../assets/images/bianpao.png')
 					icon:wushitou,	
 					url:'#/news/list'	
 				}],
-				items:[1,2,3,4,5,6,7],
 				goods:[],
 				loadCount:1,
 				allLoaded:false,
-				contentHeight:''
+				contentHeight:'',
+				swipeHeight:''
 			}
 		},
 		created(){
@@ -134,14 +130,20 @@ const bianpao = require('../../assets/images/bianpao.png')
 				
 				
 			},
+			
+		},
+		mounted(){
+			var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
+			var swpieImgHeight = swipeItem.getElementsByTagName('img')[0].clientHeight;
+			console.log(swpieImgHeight)
+			this.swipeHeight = swpieImgHeight
+
 		}
 	}
 </script>
 
 <style scoped>
 	.mint-swipe {
-		height: 180px;
-
 		overflow: hidden;
 
 	}
