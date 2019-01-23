@@ -13,15 +13,15 @@
       </mt-tab-item>
       <mt-tab-item id="shopcar">
         <img slot="icon" src="./assets/images/gouwuche.png">
-        购物车
+        好价
       </mt-tab-item>
       <mt-tab-item id="search">
         <img slot="icon" src="./assets/images/sousuo.png">
-        发现
+        好物社区
       </mt-tab-item>
       <mt-tab-item id="member">
         <img slot="icon" src="./assets/images/wodejuhuasuan.png">
-        会员
+        我的
       </mt-tab-item>
     </mt-tabbar>
   </div>

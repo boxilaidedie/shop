@@ -1,48 +1,98 @@
 <template>
 	<div>
 		
-			<!--注意项目中：overflow:scroll ，此wrapper使用fixed定位，去除首尾高度，适应mint-ui中loadmore插件 -->
-			 <div class="wrapper" :style="{'height':contentHeight,'width':'100%',position:'fixed',overflow:'scroll'}">   
-				<mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :auto-fill="false" :style="{touchAction: 'none'}">
-					<mt-swipe :auto="4000" :style="{height:swipeHeight}">
-						<mt-swipe-item v-for="(img,index) in imgs" :key="index">
-							<img :src="img">
-						</mt-swipe-item>
-					</mt-swipe>
-				<div class="grid">
-					<header-item>
-						<li v-for="(item, index) in itemImages" :key="index">
-							<a :href="item.url">
-								<span class="cms-news" :style = "{backgroundImage:'url('+item.icon+')'}"></span>
-								<div class="news-text">{{item.title}}</div>
-							</a>
-						</li>
-					</header-item>
+			<div style="width:100%;height:30px;border-top:1px solid #eeee;z-index:999;display:flex;margin-top:40px;">
+				<span :style="{height:'30px',display:'inline-block',lineHeight:'30px',width:'50%',textAlign:'center',fontSize:'14px',color:RecommendColor}" class="recommend" ref="recommend" @click="changeRecommend">推荐</span>
+				<span :style="{height:'30px',display:'inline-block',lineHeight:'30px',width:'50%',textAlign:'center',fontSize:'14px',color:FocusColor}" class="focus" ref="focus" @click="changeFocus">社区</span>
+			</div>
+			<!--注意项目中：loadmore的父元素使用fixed定位，overflow:scroll,适应mint-ui中loadmore插件 -->
+			<!-- tab-container组件 -->
+			<mt-tab-container v-model="active" :style="{width:'100%',position:'fixed'}" :swipeable=true>
+				<mt-tab-container-item id="tab-recommend" style="width:100%">
+					<div class="wrapper" :style="{overflow:'scroll',width:'100%',height:contentHeight}">
+						<!-- loadmore组件 -->
+						<mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
+							<mt-swipe :auto="4000" :style="{height:swipeHeight}">
+								<mt-swipe-item v-for="(img,index) in imgs" :key="index">
+									<img :src="img">
+								</mt-swipe-item>
+							</mt-swipe>
+							<div class="grid grid-nav">
+								<header-item>
+									<li v-for="(item, index) in itemImages" :key="index">
+										<a :href="item.url">
+											<span class="cms-news" :style = "{backgroundImage:'url('+item.icon+')'}"></span>
+											<div class="news-text">{{item.title}}</div>
+										</a>
+									</li>
+								</header-item>
+							</div>
+							<div class="good-items">
+								<ul>
+									<li v-for="(good, index) in goods" :key="index">
+										<div class="good-content" :style="{marginTop:'14px',marginLeft:'10px'}">
+											<div style="float:left">
+												<img :src="good.imageUrl" alt="" style="display:inline-block;width:90px;height:90px;">
+											</div>
+											<div>
+												<div style="float:left;padding-left:10px;" class="item-content-right">
+													<p class="good-title">{{good.title}}</p>
+													<p class="good-tag">{{good.tag}}</p>
+													<p class="good-price">{{good.price}}</p>
+													<p :style="{marginTop:'4px'}">
+														<span :style="{fontSize:'8px',marginTop:'4px'}">{{good.source}} | {{good.getTime}}</span>
+														<span :style="{fontSize:'6px',display:'inline-block',marginLeft:'70px'}">值：{{good.deserveNumberPercent}}</span>
+													</p>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</mt-loadmore>
+					</div>
+				</mt-tab-container-item>
+			<!-- tab-container组件 -->
+			<mt-tab-container-item id="tab-focus" style="width:100%">
+				<div style="width:100%">
+					<div class="header-item" :style="{width:'100%',height:'43px',display:'flexd'}">
+						<span :style="{width:'48%',height:'30px',display:'inline-block',border:'1px solid red',lineHeight:'30px',margin:'5px auto',textAlign:'center'}">1</span>
+						<span :style="{width:'48%',height:'30px',display:'inline-block',border:'1px solid red',lineHeight:'30px',margin:'5px auto',textAlign:'center'}">1</span>
+					</div>
+					
 				</div>
-				<div class="good-items">
-					<ul>
-						<li v-for="(good, index) in goods" :key="index">
-							<div class="good-content" :style="{marginTop:'14px',marginLeft:'10px'}">
-								<div style="float:left">
-									<img :src="good.imageUrl" alt="" style="display:inline-block;width:90px;height:90px;">
-								</div>
-								<div>
-									<div style="float:left;padding-left:10px;" class="item-content-right">
-										<p class="good-title">{{good.title}}</p>
-										<p class="good-tag">{{good.tag}}</p>
-										<p class="good-price">{{good.price}}</p>
-										<p :style="{marginTop:'4px'}">
-											<span :style="{fontSize:'8px',marginTop:'4px'}">{{good.source}} | {{good.getTime}}</span>
-											<span :style="{fontSize:'6px',display:'inline-block',marginLeft:'70px'}">值：{{good.deserveNumberPercent}}</span>
-										</p>
+				<!-- 关注组件 -->
+				<div class="good-items2" :style="{overflow:'scroll',display:'fixed',width:'99%',height:contentHeight2,border:'1px solid red'}">
+					<!-- loadmore组件 -->
+					<!-- <mt-loadmore 
+					:top-method="loadTop" 
+					:bottom-method="loadBottom" 
+					:bottom-all-loaded="allLoaded" ref="loadmore"
+					:auto-fill="false">
+						<ul>
+							<li v-for="(good, index) in goods" :key="index">
+									<div class="good-content" :style="{marginTop:'14px',marginLeft:'10px'}">
+										<div style="float:left">
+											<img :src="good.imageUrl" alt="" style="display:inline-block;width:90px;height:90px;">
+										</div>
+										<div>
+										<div style="float:left;padding-left:10px;" class="item-content-right">
+											<p class="good-title">{{good.title}}</p>
+											<p class="good-tag">{{good.tag}}</p>
+											<p class="good-price">{{good.price}}</p>
+											<p :style="{marginTop:'4px'}">
+												<span :style="{fontSize:'8px',marginTop:'4px'}">{{good.source}} | {{good.getTime}}</span>
+												<span :style="{fontSize:'6px',display:'inline-block',marginLeft:'70px'}">值：{{good.deserveNumberPercent}}</span>
+											</p>
+										</div>
 									</div>
 								</div>
-							</div>
-						</li>
-					</ul>
+							</li>
+						</ul>
+					</mt-loadmore> -->
 				</div>
-			</mt-loadmore>
-		</div>
+			</mt-tab-container-item>
+		</mt-tab-container>
 	</div>
 </template>
 
@@ -83,18 +133,24 @@ const bianpao = require('../../assets/images/bianpao.png')
 				}],
 				goods:[],
 				loadCount:1,
+				loadCount2:1,
 				allLoaded:false,
+				allLoaded2:false,
 				contentHeight:'',
-				swipeHeight:''
+				contentHeight2:'',
+				swipeHeight:'',
+				active:'tab-recommend',
+				RecommendColor:'red',
+				FocusColor:'#000',
 			}
 		},
 		created(){
-			var contentH = document.body.clientHeight;
-			this.contentHeight = Number(contentH)-40-100 +'px';
+			var bodyHeight = document.body.clientHeight;
+			this.contentHeight = Number(bodyHeight)-40-100 +'px';
+			this.contentHeight2 = Number(bodyHeight)-60-100 +'px';
 			this.axios.get('/api/goods?skip=5&page=1')
 			.then((res)=>{
 				this.goods = res.data.data
-				
 			}).catch((err)=>{
 				console.log(err)
 			});
@@ -107,14 +163,14 @@ const bianpao = require('../../assets/images/bianpao.png')
 					this.axios.get('/api/goods?skip=5&page='+this.loadCount)
 					.then((res)=>{
 						this.goods = this.goods.concat(res.data.data)
-						this.$refs.loadmore.onTopLoaded();	
-						
+						this.$refs.loadmore.onTopLoaded();
 					}).catch((err)=>{
 						console.log(err)
 					})
 				},1500)
 			},
 			loadBottom() {
+				console.log('a')
 				setTimeout(() => {
 					this.loadCount++;
 					this.axios.get('/api/goods?skip=5&page=' + this.loadCount)
@@ -130,13 +186,29 @@ const bianpao = require('../../assets/images/bianpao.png')
 				
 				
 			},
-			
+			changeRecommend(){
+				this.active = 'tab-recommend';
+			},
+			changeFocus(){
+				this.active = 'tab-focus';
+			}
+		},
+		watch:{
+			active:function(nVal,oVal){
+				if(nVal == 'tab-recommend'){
+					this.RecommendColor = 'red'
+					this.FocusColor = '#000'
+				}
+				if(nVal == 'tab-focus'){
+					this.FocusColor = 'red'
+					this.RecommendColor = '#000'
+				}
+			}
 		},
 		mounted(){
 			var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
 			var swpieImgHeight = swipeItem.getElementsByTagName('img')[0].clientHeight;
-			console.log(swpieImgHeight)
-			this.swipeHeight = swpieImgHeight
+			this.swipeHeight = swpieImgHeight;
 
 		}
 	}
@@ -190,6 +262,22 @@ const bianpao = require('../../assets/images/bianpao.png')
 		margin-top: 192px;
 	}
 	.good-items ul li{
+		list-style:none;
+		color:black;
+		height: 120px;
+		border: 1px solid #eee;
+		width: 94%;
+		margin:10px auto;
+		box-shadow: 0px 1px 4px grey;
+		border-radius: 4px;
+		background:#fff
+		
+	}
+	.good-items2{
+		width: 100%;
+		margin-top: 1px;
+	}
+	.good-items2 ul li{
 		list-style:none;
 		color:black;
 		height: 120px;
