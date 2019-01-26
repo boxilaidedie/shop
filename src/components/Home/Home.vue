@@ -103,10 +103,14 @@ const fuzifutie = require('../../assets/images/fuzifutie.png')
 const wushitou = require('../../assets/images/wushitou.png')
 const zhongguofengjianzhu = require('../../assets/images/zhongguofengjianzhu.png')
 const bianpao = require('../../assets/images/bianpao.png')
+import { Indicator } from 'mint-ui';
 	export default {
 		data(){
 			return {
-				imgs:['https://tp-eimg.smzdm.com/201901/22/5c468b8ceee686581.png','https://tp-eimg.smzdm.com/201901/22/5c467905d692e3454.png','https://tp-eimg.smzdm.com/201901/22/5c468b69dae7a8874.png'],
+				imgs:['https://tp-eimg.smzdm.com/201901/22/5c468b8ceee686581.png',
+				'https://tp-eimg.smzdm.com/201901/22/5c467905d692e3454.png',
+				'https://tp-eimg.smzdm.com/201901/22/5c468b69dae7a8874.png'
+				],
 				itemImages:[{
 					title:'白菜专区',
 					icon:baozhu,
@@ -148,29 +152,31 @@ const bianpao = require('../../assets/images/bianpao.png')
 			var bodyHeight = document.body.clientHeight;
 			this.contentHeight = Number(bodyHeight)-40-100 +'px';
 			this.contentHeight2 = Number(bodyHeight)-60-100 +'px';
+			
 			this.axios.get('/api/goods?skip=5&page=1')
 			.then((res)=>{
 				this.goods = res.data.data
 			}).catch((err)=>{
 				console.log(err)
 			});
-			
 		},
 		methods:{
 			loadTop(){
+				Indicator.open();
 				setTimeout(() => {
 					this.loadCount++;
 					this.axios.get('/api/goods?skip=5&page='+this.loadCount)
 					.then((res)=>{
 						this.goods = this.goods.concat(res.data.data)
+						Indicator.close();
 						this.$refs.loadmore.onTopLoaded();
+						
 					}).catch((err)=>{
 						console.log(err)
 					})
 				},1500)
 			},
 			loadBottom() {
-				console.log('a')
 				setTimeout(() => {
 					this.loadCount++;
 					this.axios.get('/api/goods?skip=5&page=' + this.loadCount)
@@ -209,7 +215,6 @@ const bianpao = require('../../assets/images/bianpao.png')
 			var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
 			var swpieImgHeight = swipeItem.getElementsByTagName('img')[0].clientHeight;
 			this.swipeHeight = swpieImgHeight;
-
 		}
 	}
 </script>

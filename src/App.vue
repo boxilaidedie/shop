@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <mt-header fixed title="什么值得买">
+    <mt-header fixed :title="title">
       <router-link to="/" slot="right">
           <mt-button icon="more"></mt-button>
       </router-link>
@@ -11,7 +11,7 @@
         <img slot="icon" src="./assets/images/shouye.png">
         首页
       </mt-tab-item>
-      <mt-tab-item id="shopcar">
+      <mt-tab-item id="goodsPrice">
         <img slot="icon" src="./assets/images/gouwuche.png">
         好价
       </mt-tab-item>
@@ -32,7 +32,8 @@ export default {
   name: 'App',
   data(){
     return {
-      selected:'home'
+      selected:'home',
+      title:'什么值得买'
     }
   },
   created(){
@@ -41,8 +42,21 @@ export default {
     })
   },
   watch:{
-    selected(nVal, oVal){
+    selected(nVal, oVal){    
       console.log(nVal)
+      this.title = nVal == 'home' ? '什么值得买' : ''
+      this.title = nVal == 'goodsPrice' ? '好价' : ''
+      this.title = nVal == 'search' ? '好物社区' : ''
+      this.title = nVal == 'member' ? '我的' : ''
+    if( nVal == 'home' ){
+      this.title = '什么值得买'
+    }else if(nVal == 'goodsPrice'){
+      this.title = '好价'
+    }else if(nVal == 'search'){
+      this.title = '好物社区'
+    }else if(nVal == 'member'){
+      this.title = '我的'
+    }
       this.$router.push({
         name:nVal
       })
