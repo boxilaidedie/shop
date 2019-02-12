@@ -1,21 +1,20 @@
 <template>
 	<div>
 		<div class="container" :style="{height:containerHeight,marginTop:'42px'}">
-			<div v-if="login">
+			<div v-if="$store.state.isLogin">
 				<div class="header">
 					<div class="user-head">
 						<img src="#" alt="">
 						$
 					</div>
 					<div class="user-msg">
-						<p class="name">值友6102131231</p>
+						<p class="name">{{username}}</p>
 						<p>
 							<span class="grade">等级3</span>
 							<span class="gold">金币: 6</span>
 						</p>
 					</div>
 				</div>
-
 				<div class="wrapper-btn">
 					<div class="wrapper-btn-left">
 						<div class="wrapper-main">
@@ -39,7 +38,7 @@
 				</div>
 			</div>
 			<div v-else>
-				<div class="header login" @click="signIn">
+				<div class="header login" @click="loginPageOpen">
 					<div class="user-head">
 						<img src="#" alt="">
 						$
@@ -50,26 +49,9 @@
 					</div>
 				</div>
 			</div>
-			<mt-popup
-				v-model="popupVisible"
-				position="bottom"
-				>
-				<div>
-					<div class="close" @click="closeLogin" :style="{width:'130px',height:'50px',fontSize:'30px',color:'red',fontWeight:'bold',margin:'15px'}">关闭</div>
-					<div :style="{fontSize:'20px',fontWeight:'bold',margin:'15px'}">手机快捷登录</div>
-					<div>
-						<mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="phone">
-							<div class="getCaptcha" :style="{width:'100px',height:'30px',background:'grey',color:'#fff',fontSize:'14px',textAlign:'center',lineHeight:'30px'}">
-								获取验证码
-							</div>	
-						</mt-field>
-							<mt-field label="验证码" v-model="captcha" >
-						</mt-field>
-					</div>
-					<div :style="{fontSize:'14px',color:'grey',marginLeft:'18px',marginTop:'10px'}">未注册手机号将自动注册</div>
-					<div :style="{position:'fixed',bottom:'0px',height:'60px',width:'100%',lineHeight:'60px',textAlign:'center',color:'#fff',background:'red',fontSize:'22px'}" @click="PhoneLogin">登录</div>
-				</div> 
-			</mt-popup>
+			<!-- 登录页面 -->
+			<mt-login :loginVisible = loginVisible @sendLoginVisible="loginPageClose"></mt-login>
+
 			<div class="wrapper-ad-info">
 				<mt-swipe :auto="4000" :style="{height:'100px'}">
 					<mt-swipe-item v-for="(img,index) in imgs" :key="index">
@@ -77,12 +59,11 @@
 					</mt-swipe-item>
 				</mt-swipe>
 			</div>
-			
 			<div class="wrapper-item">
 				<div class="footer-top-items">
 					<mt-cell title="我的消息">
 						<img slot="icon" src="../../assets/images/xiaoxizhongxin.png" width="24" height="24">
-						<span style="display:inline-block;width:35px;height:18px;background:red;border-radius:5px;text-align:center;line-height:18px;color:#fff">{{message}}</span>
+						<span v-show="$store.state.isLogin" style="display:inline-block;width:35px;height:18px;background:red;border-radius:5px;text-align:center;line-height:18px;color:#fff">{{myMessage}}</span>
 					</mt-cell>
 					<mt-cell title="我的发布">
 						<span>好价、原创等</span>
@@ -102,31 +83,39 @@
 					<mt-cell title="我的勋章">
 						<img slot="icon" src="../../assets/images/wodedingdan.png" width="24" height="24">
 					</mt-cell>
-					<mt-cell title="设置">
-						<img slot="icon" src="../../assets/images/shezhi.png" width="24" height="24">
-					</mt-cell>
+					<div @click="settingPageOpen">
+						<mt-cell title="设置" >
+							<img slot="icon" src="../../assets/images/shezhi.png" width="24" height="24" >
+						</mt-cell>
+					</div>
 				</div>
+				<mt-setting :settingVisible="settingVisible" @sendSettingVisible="settingPageClose"></mt-setting>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import { MessageBox } from 'mint-ui';
+	import { MessageBox } from 'mint-ui'
+	import Login from './Login'
+	import Setting from './Setting'
+	
+	var storage = window.localStorage
 	export default {
 		data(){
 			return {
 				containerHeight:'',
-				imgs:['https://tp-eimg.smzdm.com/201901/22/5c468b8ceee686581.png','https://tp-eimg.smzdm.com/201901/22/5c467905d692e3454.png','https://tp-eimg.smzdm.com/201901/22/5c468b69dae7a8874.png'],
-				message:5,
-				signature:'签到领奖',
-				signStatus:false,
-				login:false,
-				popupVisible:false,
 				modalWidth:'',
 				modalHeight:'',
-				phone:'',
-				captcha:''
+				username:'',
+				imgs:['https://tp-eimg.smzdm.com/201901/22/5c468b8ceee686581.png','https://tp-eimg.smzdm.com/201901/22/5c467905d692e3454.png','https://tp-eimg.smzdm.com/201901/22/5c468b69dae7a8874.png'],
+				myMessage:5,
+				signature:'签到领奖',
+				signStatus:false,
+				loginStatus:this.$store.state.isLogin,
+				loginVisible:false,
+				settingVisible:false,
+
 			}
 		},
 		methods:{
@@ -142,28 +131,43 @@
 							this.signStatus = true
 						}
 					});
-				}else{
-					return false
 				}
 			},
-			signIn(){
-				this.popupVisible = true
+			loginPageOpen(){
+				this.loginVisible  = true;
 			},
-			closeLogin(){
-				this.popupVisible = false
+			loginPageClose(msg){
+				this.loginVisible = false;
 			},
-			PhoneLogin(){
-				this.popupVisible = false
-				this.login = true
-				// this.$store.commit('show')
-				// this.login = this.$store.state.login
+			settingPageOpen(){
+				if(this.$store.state.isLogin){
+					this.settingVisible = true		
+				}else{
+					this.loginPageOpen()
+				}
+			},
+			settingPageClose(msg){
+				console.log(storage['phone'])
+				console.log(this.$store.state.isLogin)
+				this.settingVisible = false;
+				
+				console.log(this.$store.getters.login)
 
+				
 			}
 		},
 		created(){
 			var windowHeight = document.body.clientHeight
 			this.containerHeight = windowHeight - 40 - 55 + 'px'
-		}
+			if(storage['phone']){
+				this.loginStatus = true
+				this.$store.commit('show')
+				this.username = storage['phone']
+				
+			}
+			
+		},
+		components:{'mt-login':Login,'mt-setting':Setting}
 	}
 </script>
 <style scope>
