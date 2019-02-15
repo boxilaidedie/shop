@@ -1,6 +1,6 @@
 <template>
 	<div>
-		
+			
 			<div style="width:100%;height:30px;border-top:1px solid #eeee;z-index:999;display:flex;margin-top:40px;">
 				<span :style="{height:'30px',display:'inline-block',lineHeight:'30px',width:'50%',textAlign:'center',fontSize:'14px',color:RecommendColor}" class="recommend" ref="recommend" @click="changeRecommend">推荐</span>
 				<span :style="{height:'30px',display:'inline-block',lineHeight:'30px',width:'50%',textAlign:'center',fontSize:'14px',color:FocusColor}" class="focus" ref="focus" @click="changeFocus">社区</span>
@@ -152,13 +152,16 @@ import { Indicator } from 'mint-ui';
 			var bodyHeight = document.body.clientHeight;
 			this.contentHeight = Number(bodyHeight)-40-100 +'px';
 			this.contentHeight2 = Number(bodyHeight)-60-100 +'px';
-			
-			this.axios.get('/api/goods?skip=5&page=1')
-			.then((res)=>{
-				this.goods = res.data.data
-			}).catch((err)=>{
-				console.log(err)
-			});
+			this.$store.dispatch('actionA').then(()=>{
+				var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
+				var that = this;
+				swipeItem.getElementsByTagName('img')[0].onload = function(){
+					var swpieImgHeight = swipeItem.getElementsByTagName('img')[0].clientHeight;
+					that.swipeHeight = swpieImgHeight + 'px';
+					console.log(that.swipeHeight)	
+					that.goods = that.$store.state.items
+				}
+			})
 		},
 		methods:{
 			loadTop(){
@@ -183,11 +186,10 @@ import { Indicator } from 'mint-ui';
 					.then((res)=>{
 						this.goods = this.goods.concat(res.data.data)
 						this.$refs.loadmore.onBottomLoaded();
-					
 					}).catch((err)=>{
 						console.log(err)
 					})
-					console.log(this.goods)
+					//console.log(this.goods)
 				}, 1500);
 				
 				
@@ -212,9 +214,7 @@ import { Indicator } from 'mint-ui';
 			}
 		},
 		mounted(){
-			var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
-			var swpieImgHeight = swipeItem.getElementsByTagName('img')[0].clientHeight;
-			this.swipeHeight = swpieImgHeight;
+				
 		}
 	}
 </script>
