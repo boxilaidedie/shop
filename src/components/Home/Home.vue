@@ -152,6 +152,13 @@ import { Indicator } from 'mint-ui';
 			var bodyHeight = document.body.clientHeight;
 			this.contentHeight = Number(bodyHeight)-40-100 +'px';
 			this.contentHeight2 = Number(bodyHeight)-60-100 +'px';
+			this.axios.get('/api/goods?skip=5&page=1')
+				.then((res)=>{
+					this.goods =res.data.data
+				}).catch((err)=>{
+					console.log(err)
+			})
+
 			this.$store.dispatch('actionA').then(()=>{
 				var swipeItem = document.getElementsByClassName('mint-swipe-item')[0];
 				var that = this;
